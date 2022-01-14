@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+</head>
+
+<body>
+    <div id="app">
+        <v-app>
+            <v-main>
+                <v-container>
+                    <v-row justify="center">
+                        <v-col justify="center" align="center" cols=12 md=6>
+                            <v-text-field label="Texto encriptado" placeholder="Ingrese el texto encriptado" outlined
+                                v-model="textoDes">
+                            </v-text-field>
+                        </v-col>
+                        <v-col justify="center" align="center" cols=12 md=6>
+                            <v-btn block rounded elevation="2" x-large color="primary" outlined
+                                @click="calcular_caracter">Descencriptar <v-icon dark right>
+                                    mdi-checkbox-marked-circle
+                                </v-icon>
+                            </v-btn>
+                        </v-col>
+                    </v-row>
+                    <v-row justify="center">
+                        <v-col justify="center" align="center" cols=12 md=6>
+                            <h1>{{textoL}}</h1>
+                        </v-col>
+                    </v-row>
+                </v-container>
+
+                <v-btn depressed>
+                    Normal
+                </v-btn>
+                <v-btn depressed color="primary">
+                    Primary
+                </v-btn>
+                <v-btn color="orange lighten-2" class="mt-12" @click="overlay = !overlay">
+                    Show Overlay
+                </v-btn>
+            </v-main>
+            <template>
+                <v-row align="center" justify="center">
+
+                    <v-overlay :value="overlay">
+                        <v-card height="300" width="250">
+                            <v-card-title primary-title>
+                                <v-container>
+                                    <v-row justify="center">
+                                        <v-col justify="center" align="center" cols=12>
+                                            <h1 class="text-xs-center">Inicio</h1>
+                                        </v-col>
+                                    </v-row>
+                                </v-container>
+
+                            </v-card-title>
+                            <v-card-text>
+                                <v-container>
+                                    <v-row justify="center">
+                                        <v-col justify="center" align="center" cols=12>
+                                            <v-text-field v-model="password"
+                                                :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'" name="input-10-1"
+                                                label="CLAVE" :type="show1 ? 'text' : 'password'" counter
+                                                @click:append="show1 = !show1">
+                                            </v-text-field>
+                                        </v-col>
+                                    </v-row>
+                                    <v-row justify="center">
+                                        <v-col justify="center" align="center" cols=12>
+                                            <v-btn color="blue lighten-2" @click="overlay = false" v-if=Verifica_Clave>
+                                                Ingresar
+                                            </v-btn>
+                                        </v-col>
+                                    </v-row>
+                                </v-container>
+                            </v-card-text>
+
+
+                        </v-card>
+
+                    </v-overlay>
+
+
+                </v-row>
+            </template>
+        </v-app>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+    <script>
+        Number.prototype.mod = function (n) {
+            return ((this % n) + n) % n;
+        };
+        new Vue({
+            el: '#app',
+            vuetify: new Vuetify(),
+            data: {
+                overlay: false,
+                password: "DNLC",
+                show1: false,
+                clave: false,
+                textoDes: "sadasdasdasd",
+                textoL: "",
+                caracteres: [],
+                iniciar: false,
+                TEXTO: "",
+                tInterval: null, // little trick here, check it out next step
+                iterador: 0,
+                donde: 0
+
+            },
+            methods: {
+                mod(n, m) {
+                    return ((n % m) + m) % m;
+                },
+                encriptar() {
+                    cara = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'Ñ', 'N', 'O', 'P',
+                        'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g',
+                        'h', 'i', 'j', 'k', 'l', 'm', 'n', 'ñ', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w',
+                        'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ' ', '.', '¿', '¡',
+                        '!', '\\', '/', '&', '(', ')'
+                    ]
+                    des = []
+                    real = ""
+                    fack = ""
+                    for (let i = 0; i < this.password.length; i++) {
+                        if (cara.includes(this.password[i]))
+                            des.push(cara.indexOf(this.password[i]))
+                        else
+                            des.push(this.password[i])
+                    }
+
+                    for (let i = 0; i < this.textoDes.length; i++) {
+                        if (cara.includes(this.textoDes[i])) {
+                            let val = cara.indexOf(this.textoDes[i])
+                            let clav = des[this.mod(i, (this.password.length))]
+                            real += (cara[this.mod((val + clav), cara.length)])
+                        } else
+                            real += this.textoDes[i]
+                    }
+
+                    //fo9eylFlsBazrF39nh2¡0zFnó5d!61                    
+                },
+                
+
+                calcular_caracter() {
+                    cara = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'Ñ', 'N', 'O', 'P',
+                        'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g',
+                        'h', 'i', 'j', 'k', 'l', 'm', 'n', 'ñ', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w',
+                        'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ' ', '.', '¿', '¡',
+                        '!', '\\', '/', '&', '(', ')'
+                    ]
+                    des = []
+                    real = this.textoDes
+
+                    for (let i = 0; i < this.password.length; i++) {
+                        if (cara.includes(this.password[i]))
+                            des.push(cara.indexOf(this.password[i]))
+                        else
+                            des.push(this.password[i])
+                    }
+                    fack = ""
+                    this.textoL = ""
+                    console.log(real);
+                    for (let i = 0; i < real.length; i++) {
+                        if (cara.includes(real[i])) {
+                            let val = cara.indexOf(real[i])
+                            let clav = des[this.mod(i , this.password.length)]
+                            fack += (cara[this.mod((val - clav), cara.length)])
+                        } else {
+                            fack += real[i]
+                        }
+                        this.TEXTO = fack
+                        this.textoL = fack
+                    }
+                    this.iniciar = false
+                },
+                
+                
+
+            },
+            computed: {
+                Verifica_Clave() {
+                    if (this.password !== "") {
+                        return true
+                    } else {
+                        return false
+                    }
+                },
+            },
+
+
+        })
+    </script>
+</body>
+
+</html>
